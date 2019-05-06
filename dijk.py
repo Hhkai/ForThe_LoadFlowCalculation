@@ -113,7 +113,8 @@ def main():
     with open("out.dis", "w") as f:
         for i in buses:
             for j in i.genList:
-                f.write("%d:%f, " % (j[0], j[1]))
+                # f.write("%d:%f, " % (j[0], j[1]))
+                f.write("%d, " % j[0])
             f.write("\n")
     with open("nameout.dis", "w") as f:
         for n, i in enumerate(buses):
