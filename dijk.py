@@ -60,6 +60,7 @@ def readEdge():
                 addEdge(left, right, dis, edgeList)
                 addEdge(right, left, dis, edgeList)
     #
+    realbus = maxid
     with open("LF.L3") as f:
         lines = f.readlines()
         for n, line in enumerate(lines):
@@ -76,7 +77,7 @@ def readEdge():
                         busname.append("v")
                     addEdge(trans[left], right, 0, edgeList)
                     addEdge(right, trans[left], 0, edgeList)
-    return busname, maxid
+    return busname, maxid, realbus
 def readGen():
     genlist = []
     with open("LF.L5") as f:
@@ -96,7 +97,7 @@ class bus:
         self.genList = sorted(self.genDis.items(), key=lambda d:d[1], reverse = False)
 def main():
     print("read files ...")
-    busname, nodecnt = readEdge()
+    busname, nodecnt, realbus = readEdge()
     genList = readGen()
     buses = []
     for i in range(nodecnt):
@@ -111,7 +112,7 @@ def main():
         i.mysort()
     #
     with open("out.dis", "w") as f:
-        for i in buses:
+        for i in buses[:realbus]:
             for j in i.genList:
                 # f.write("%d:%f, " % (j[0], j[1]))
                 f.write("%d, " % j[0])
