@@ -14,10 +14,15 @@ class edge:
         self.val = val 
 def addEdge(u, to, val, edgeList):
     global ecnt
+    global edgeList
+    global head
     ecnt += 1
     edgeList[ecnt] = edge(to, head[u], val)
     head[u] = ecnt
 def dijkstra(u, nodecnt):
+    global ecnt
+    global edgeList
+    global head
     dis = [999999999] * (nodecnt + 1) 
     vis = [0] * (nodecnt + 1) 
     q = queue.PriorityQueue()
