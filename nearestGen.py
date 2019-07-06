@@ -2,6 +2,8 @@ import queue
 import math
 import sys
 
+# python3
+
 SIZE = 50000
 edgeList = [0] * SIZE
 head = [0] * SIZE # the ``first'' edge of nodes
@@ -14,14 +16,12 @@ class edge:
         self.val = val 
 def addEdge(u, to, val, edgeList):
     global ecnt
-    global edgeList
     global head
     ecnt += 1
     edgeList[ecnt] = edge(to, head[u], val)
     head[u] = ecnt
 def dijkstra(u, nodecnt):
     global ecnt
-    global edgeList
     global head
     dis = [999999999] * (nodecnt + 1) 
     vis = [0] * (nodecnt + 1) 
@@ -116,17 +116,19 @@ def main():
     for i in buses:
         i.mysort()
     #
-    with open("out.dis", "w") as f:
+    with open("out.txt", "w") as f:
         for i in buses[:realbus]:
             for j in i.genList:
                 # f.write("%d:%f, " % (j[0], j[1]))
                 f.write("%d, " % j[0])
             f.write("\n")
+    '''
     with open("nameout.dis", "w") as f:
         for n, i in enumerate(buses):
             f.write("%s:" % busname[n + 1])
             for j in i.genList:
                 f.write("%s, " % busname[j[0]])
             f.write("\n")
+    '''
 if __name__ == "__main__":
     main()
