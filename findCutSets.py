@@ -108,7 +108,7 @@ def readGraph():
         nodes[i[1]].w = i[3]
     mx6 = readfile('LF.L6')
     for i in mx6:
-        nodes[i[1]].w = i[4]
+        nodes[i[1]].w = -i[4]
     return busname, maxid, realbus, enodeset
 #
 def checkM(graph):
