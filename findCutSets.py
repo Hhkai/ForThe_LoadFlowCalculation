@@ -34,6 +34,14 @@ class Node:
         self.name = '-'
     def addNbr(self, node):
         self.nbrs.add(node)
+    def annex(self, node):
+        global nodes
+        self.nbrs = self.nbrs | nodes[node].nbrs
+        self.w += nodes[node].w 
+        for i in nodes[node].nbrs:
+            if i != node:
+                nodes[i].nbrs.remove(node)
+                nodes[i].nbrs.add(self.ind)
 #
 class Cut:
     def __init__(self, left, val):
@@ -167,9 +175,8 @@ def main():
         if curval == None:
             break
         nodesleft.remove(curcut[1])
-        nodes[i].nbrs = nodes[i].nbrs | nodes[j].nbrs
-        nodes[i].w += nodes[j].w
-    with open('out.txt', 'w') as f:
+        nodes[i].annex(j)
+    with open('out1.txt', 'w') as f:
         for i in h:
             f.write(i.mstr())
             '''
