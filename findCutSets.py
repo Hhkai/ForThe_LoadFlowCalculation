@@ -123,6 +123,8 @@ def checkM(graph):
     while not Q.empty():
         u = Q.get()
         for i in nodes[u].nbrs:
+            if i not in graph:
+                continue
             if i not in canvis:
                 canvis.add(i)
                 Q.put(i)
