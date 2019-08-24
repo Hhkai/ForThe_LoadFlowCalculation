@@ -21,7 +21,7 @@ def readfile(filename, coding='utf-8'):
 #
 
 class Edge:
-    def __init__(u_node : int, v_node : int, val):
+    def __init__(self, u_node : int, v_node : int, val):
         self.u = u_node
         self.v = v_node
         self.val = val
