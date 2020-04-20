@@ -1,4 +1,14 @@
+#####每台发电机对每条线路的灵敏度
+
 import os
+# os.chdir('D:/0潮流/潮流程序/潮流调整/静稳N-1/东北电网系统/2020年东北年度计算-东北腰荷（伊穆直流300）-鲁固500')
+
+outputfilename = 'ans0417.txt'
+bus_number = 20
+deltaP_list = [1.0, 0.5, 0.3, 0.1] 
+# 给发电机有功增加1.0, 计算灵敏度, 如果不收敛, 则取下一个数再次试探
+# 如果发电机未开机, 开机并设有功为1.0, 0.5 ... 等
+
 def getflag():
     with open("LF.CAL") as f:
         line = f.readline()
@@ -7,8 +17,8 @@ def getflag():
     return success == 1
 def changeOneGen(rowNum, ori):
     mx = []
-    with open('anse.txt', 'a') as f:
-        f.write('#'+str(rowNum+1)+'\n')
+    with open(outputfilename, 'a') as f:
+        f.write(str(rowNum+1)+'\n')
     with open('LF.L5', encoding='gb2312', errors='ignore') as f:
         for line in f.readlines():
             line = eval(line.strip())
@@ -18,34 +28,12 @@ def changeOneGen(rowNum, ori):
     name = mx[rowNum][-1]
     flag = mx[rowNum][0]
     p = mx[rowNum][3]
-    deltaP = 0
-    if flag == 0:
-        mx[rowNum][0] = 1
-        mx[rowNum][3] = 1.0
-        deltaP = 1.0
-    else:
-        mx[rowNum][3] = p + 0.5
-        deltaP = 0.5
-    # change mx 
-    with open('LF.L5', mode = 'w', encoding = 'gb2312', errors = 'ignore') as f:
-        for row in mx:
-            templine = []
-            for j in row:
-                templine.append(j)
-            for ind, iii in enumerate(templine):
-                if type(iii) == type(0.0):
-                    templine[ind] = round(iii, 4)
-            f.write(str(templine)[1:-1] + ',\n')
-    # write 
-    res = calc(deltaP, ori)
-    if res == 'not conve':
+    for deltaP in deltaP_list:
         if flag == 0:
             mx[rowNum][0] = 1
-            mx[rowNum][3] = 0.5
-            deltaP = 0.5
+            mx[rowNum][3] = deltaP
         else:
-            mx[rowNum][3] = p + 0.2
-            deltaP = 0.2
+            mx[rowNum][3] = p + deltaP
         # change mx 
         with open('LF.L5', mode = 'w', encoding = 'gb2312', errors = 'ignore') as f:
             for row in mx:
@@ -56,26 +44,10 @@ def changeOneGen(rowNum, ori):
                     if type(iii) == type(0.0):
                         templine[ind] = round(iii, 4)
                 f.write(str(templine)[1:-1] + ',\n')
+        # write 
         res = calc(deltaP, ori)
-    if res == 'not conve':
-        if flag == 0:
-            mx[rowNum][0] = 1
-            mx[rowNum][3] = 0.2
-            deltaP = 0.2
-        else:
-            mx[rowNum][3] = p + 0.1
-            deltaP = 0.1
-        # change mx 
-        with open('LF.L5', mode = 'w', encoding = 'gb2312', errors = 'ignore') as f:
-            for row in mx:
-                templine = []
-                for j in row:
-                    templine.append(j)
-                for ind, iii in enumerate(templine):
-                    if type(iii) == type(0.0):
-                        templine[ind] = round(iii, 4)
-                f.write(str(templine)[1:-1] + ',\n')
-        res = calc(deltaP, ori)
+        if res != 'not conve':
+            break
     
     # write back
     mx[rowNum][0] = flag
@@ -90,7 +62,7 @@ def changeOneGen(rowNum, ori):
                     templine[ind] = round(iii, 4)
             f.write(str(templine)[1:-1] + ',\n')
     # write back
-    with open('anse.txt', 'a') as f:
+    with open(outputfilename, 'a') as f:
         f.write('---\n')
     return 
 def calc(deltaP, ori):
@@ -110,7 +82,7 @@ def calc(deltaP, ori):
                 if rate > 0.00001 or rate < -0.00001:
                     tempStore[name] = rate
                 
-    with open('anse.txt', 'a') as f:
+    with open(outputfilename, 'a') as f:
         for i in tempStore:
             f.write(i+', %.6f\n' % tempStore[i])
     return 'ok'
@@ -125,5 +97,6 @@ def getOriginLP2():
                 Lp2s[name] = val
     return Lp2s
 oriLp2s = getOriginLP2()
-for i in range(2283):
+for i in range(bus_number):
     changeOneGen(i, oriLp2s)
+    continue
